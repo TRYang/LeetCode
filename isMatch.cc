@@ -12,7 +12,7 @@ bool isMatch(const char *s, const char *p) {
     for (int i = length; i > 0; i--) {
       char *st = (char*)s;
       st += i - 1;
-      if (*ptr == '.') {
+      if (*ptr == '?') {
         match[i] = match[i - 1];
       } else
       if (*ptr == '*') {
@@ -23,7 +23,7 @@ bool isMatch(const char *s, const char *p) {
         else match[i] = false;
       }
     }
-    match[0] = true;
+    if (match[0] && *ptr == '*') match[0] = true; else match[0] = false;
   }
   return match[length];
 }
