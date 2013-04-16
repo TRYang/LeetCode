@@ -1,9 +1,11 @@
 bool isPalindrome(int x) {
   if (x < 0) return false;
-  int y = 0, tmp = x;
-  while (tmp > 0) {
-    y = y * 10 + tmp % 10;
-    tmp /= 10;
+  int div = 1;
+  while (x / div >= 10) div *= 10;
+  while (x >= 10) {
+    if (x / div != x % 10) return false;
+    x = x % div / 10;
+    div /= 100;
   }
-  return x == y;
+  return true;
 }
