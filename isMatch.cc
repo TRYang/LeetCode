@@ -1,29 +1,43 @@
 bool isMatch(const char *s, const char *p) {
-  int length = strlen(s);
-  std::vector<bool> match(length + 1);
-  match[0] = true;
-  for (char *ptr = (char*)p; *ptr; ptr++) {
-    int minp = length + 2;
-    for (int i = 0; i <= length; i++)
-      if (match[i]) {
-        minp = i;
-        break;
-      }
-    for (int i = length; i > 0; i--) {
-      char *st = (char*)s;
-      st += i - 1;
-      if (*ptr == '?') {
-        match[i] = match[i - 1];
-      } else
-      if (*ptr == '*') {
-        if (minp <= i) match[i] = true;
-        else match[i] = false;
+  int n = strlen(s), m = strlen(p);
+  vector<vector<int> > f;
+  for (int i = 0; i <= m; i++) {
+    vector<int> tmp(n + 1, 0);
+    f.push_back(tmp);
+  }
+  f[0][0] = 1;
+  for (int i = 0; i < m; ) {
+    char c = p[i];
+    int flag = 0;
+    if (i < m - 1 && p[i + 1] == '*') {
+      flag = 1;
+    }
+    int nxt = i + 1 + flag;
+    if (flag) {
+      f[nxt][0] = f[i][0];
+    }
+    for (int j = 0; j < n; ) {
+      if (!flag) {
+        if (s[j] == c || c == '.') {
+          f[nxt][j + 1] = f[i][j];
+        } else {
+        }
+        ++j;
       } else {
-        if (*ptr == *st) match[i] = match[i - 1];
-        else match[i] = false;
+        if (s[j] == c || c == '.') {
+          int value = f[i][j];
+          while (j < n && (s[j] == c || c == '.')) {
+            value |= f[i][j + 1];
+            f[nxt][j + 1] |= value;
+            ++j;
+          }
+        } else {
+          f[nxt][j + 1] = f[i][j + 1];
+          ++j;
+        }
       }
     }
-    if (match[0] && *ptr == '*') match[0] = true; else match[0] = false;
+    i = nxt;
   }
-  return match[length];
+  return f[m][n];
 }
